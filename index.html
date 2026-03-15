@@ -314,7 +314,7 @@ function showRes(){
 }
 
 function sendToSheet(name,org,ns,ps){
-  if(APPS_SCRIPT_URL==='https://script.google.com/macros/s/AKfycbynYbYUPtR9quczQY-E6KlTSp0m3zoXS14nyXQmtbKNNn59Pz7S7iu_QSPuJsXzOh-A/exec')return;
+ if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL==='PASTE_URL_APPS_SCRIPT_DI_SINI')return;
   const status=document.getElementById('submit-status');
   status.className='submit-status sending';status.textContent='⏳ Mengirim data ke database...';
   const params=new URLSearchParams({
