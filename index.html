@@ -210,7 +210,15 @@ let radarChart=null;
 
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
 
-function startApp(){renderDims('now');renderDims('pref');updDots('now');updDots('pref');go('s-now')}
+function startApp(){
+  const name=document.getElementById('inp-name').value.trim();
+  const org=document.getElementById('inp-org').value.trim();
+  if(!name||!org){
+    alert('Mohon isi nama dan nama perusahaan terlebih dahulu.');
+    return;
+  }
+  renderDims('now');renderDims('pref');updDots('now');updDots('pref');go('s-now');
+}
 
 function resetApp(){
   nowR=DIMS.map(()=>({}));prefR=DIMS.map(()=>({}));
