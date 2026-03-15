@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OCAI Sederhana — Penilaian Budaya Organisasi</title>
+<title>Asesmen Budaya Perusahaan</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -83,21 +83,21 @@
 <!-- INTRO -->
 <div class="screen active" id="s-intro">
   <div class="header">
-    <div class="header-label">Penilaian Budaya Organisasi</div>
-    <div class="header-title">OCAI Sederhana</div>
-    <div class="header-sub">Petakan profil budaya organisasi Anda — kondisi saat ini dan yang diinginkan.</div>
+    <div class="header-label">Asesmen Budaya Perusahaan</div>
+    <div class="header-title">Asesmen Budaya</div>
+    <div class="header-sub">Kuesioner ini membantu melihatgambaran budaya kerja di perusahaan Anda.</div>
   </div>
-  <div class="intro-desc">Kuesioner ini terdiri dari <strong>6 dimensi</strong>, masing-masing berisi 4 pernyataan. Anda akan mengisi dua kali: kondisi <em>saat ini</em> dan kondisi yang <em>diinginkan</em>.</div>
+  <div class="intro-desc">Kuesioner ini terdiri dari <strong>6 nomor</strong>, masing-masing berisi 4 pernyataan. Anda akan mengisi dua kali: kondisi <em>saat ini</em> dan kondisi yang <em>diinginkan</em>.</div>
   <div class="tip-box"><strong>Cara mengisi:</strong> Klik pernyataan secara berurutan sesuai tingkat kesesuaian — pertama diklik = paling sesuai (peringkat 1), terakhir = kurang sesuai (peringkat 4). Klik lagi untuk membatalkan.</div>
   <div class="form-group">
     <label class="form-label">Nama Anda</label>
     <input class="form-input" type="text" id="inp-name" placeholder="Nama lengkap">
   </div>
   <div class="form-group">
-    <label class="form-label">Organisasi / unit kerja</label>
-    <input class="form-input" type="text" id="inp-org" placeholder="Nama organisasi atau unit">
+    <label class="form-label">Nama Perusahaan / Posisi</label>
+    <input class="form-input" type="text" id="inp-org" placeholder="Nama perusahaan atau posisi">
   </div>
-  <button class="btn btn-primary btn-full" style="margin-top:1.5rem" onclick="startApp()">Mulai penilaian →</button>
+  <button class="btn btn-primary btn-full" style="margin-top:1.5rem" onclick="startApp()">Mulai pengisian →</button>
 </div>
 
 <!-- NOW -->
@@ -105,7 +105,7 @@
   <div class="prog-bar"><div class="prog-fill" id="pb-now" style="width:0%"></div></div>
   <div class="sec-label">Bagian 1 dari 2</div>
   <div class="sec-title">Kondisi <em>saat ini</em></div>
-  <div class="sec-sub">Urutan pernyataan yang paling menggambarkan organisasi Anda sekarang.</div>
+  <div class="sec-sub">Urutkan pernyataan yang paling menggambarkan kondisi perusahaan Anda saat ini.</div>
   <div class="comp-dots" id="cd-now"></div>
   <div id="dims-now"></div>
   <div class="nav-row">
@@ -119,7 +119,7 @@
   <div class="prog-bar"><div class="prog-fill" id="pb-pref" style="width:50%"></div></div>
   <div class="sec-label">Bagian 2 dari 2</div>
   <div class="sec-title">Kondisi yang <em>diinginkan</em></div>
-  <div class="sec-sub">Urutan pernyataan yang paling menggambarkan organisasi ideal Anda ke depan.</div>
+  <div class="sec-sub">Urutkan pernyataan yang paling menggambarkan kondisi perusahaan yang Anda harapkan ke depannya.</div>
   <div class="comp-dots" id="cd-pref"></div>
   <div id="dims-pref"></div>
   <div class="nav-row">
@@ -131,7 +131,7 @@
 <!-- RESULT -->
 <div class="screen" id="s-res">
   <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div>
-  <div class="sec-label">Profil budaya organisasi</div>
+  <div class="sec-label">Profil budaya perusahaan</div>
   <div class="sec-title" id="res-title"></div>
   <div class="res-meta" id="res-meta"></div>
   <div class="leg-row">
@@ -162,41 +162,41 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynYbYUPtR9qucz
 // ===================================================
 
 const DIMS=[
-  {t:"1 · Karakteristik dominan",opts:[
-    {k:'A',c:'Clan',tx:"Organisasi terasa seperti keluarga besar. Orang-orang saling peduli dan berbagi satu sama lain."},
-    {k:'B',c:'Adhocracy',tx:"Organisasi sangat dinamis dan inovatif. Orang-orang berani mencoba hal baru dan mengambil risiko."},
-    {k:'C',c:'Market',tx:"Organisasi sangat fokus pada hasil. Orang-orang kompetitif dan berorientasi pada pencapaian target."},
-    {k:'D',c:'Hierarchy',tx:"Organisasi sangat terstruktur dan formal. Prosedur dan kebijakan mengatur cara kerja sehari-hari."}
+  {t:"1 · Gambaran umum perusahaan",opts:[
+    {k:'A',c:'Clan',tx:"Perusahaan terasa seperti keluarga. Karyawan saling mengenal dan saling membantu."},
+    {k:'B',c:'Adhocracy',tx:"Perusahaan penuh ide baru. Karyawan didorong mencoba cara baru dan berani mengambil risiko."},
+    {k:'C',c:'Market',tx:"Perusahaan sangat fokus pada target dan hasil kerja."},
+    {k:'D',c:'Hierarchy',tx:"Perusahaan berjalan dengan aturan dan prosedur yang jelas."}
   ]},
-  {t:"2 · Kepemimpinan",opts:[
-    {k:'A',c:'Clan',tx:"Pemimpin bertindak sebagai mentor dan pembimbing yang peduli pada perkembangan anggota tim."},
-    {k:'B',c:'Adhocracy',tx:"Pemimpin mendorong inovasi, pengambilan risiko, dan cara-cara baru dalam bekerja."},
-    {k:'C',c:'Market',tx:"Pemimpin tegas dan berorientasi hasil, mendorong tim untuk mengungguli kompetitor."},
-    {k:'D',c:'Hierarchy',tx:"Pemimpin mengutamakan koordinasi, efisiensi, dan kelancaran operasional."}
+  {t:"2 · Cara pimpinan memimpin",opts:[
+    {k:'A',c:'Clan',tx:"Pimpinan seperti pembimbing yang peduli pada perkembangan karyawan."},
+    {k:'B',c:'Adhocracy',tx:"Pimpinan mendorong tim untuk berani mencoba ide baru."},
+    {k:'C',c:'Market',tx:"Pimpinan menuntut hasil kerja yang tinggi dan mendorong tim untuk menang dalam persaingan."},
+    {k:'D',c:'Hierarchy',tx:"Pimpinan fokus menjaga pekerjaan berjalan rapi, tertib, dan terkoordinasi."}
   ]},
-  {t:"3 · Manajemen karyawan",opts:[
-    {k:'A',c:'Clan',tx:"Karyawan dikelola melalui kerja tim, partisipasi, dan pengambilan keputusan bersama."},
-    {k:'B',c:'Adhocracy',tx:"Karyawan diberi kebebasan untuk berinovasi, berinisiatif, dan mengekspresikan keunikan mereka."},
-    {k:'C',c:'Market',tx:"Karyawan dikelola dengan standar tinggi, kompetisi sehat, dan fokus pada pencapaian."},
-    {k:'D',c:'Hierarchy',tx:"Karyawan dikelola dengan aturan jelas, prosedur terstandar, dan ekspektasi yang dapat diprediksi."}
+  {t:"3 · Cara perusahaan mengelola karyawan",opts:[
+    {k:'A',c:'Clan',tx:"Karyawan banyak bekerja dalam tim dan dilibatkan dalam pengambilan keputusan."},
+    {k:'B',c:'Adhocracy',tx:"Karyawan diberi kebebasan untuk berkreasi dan mencoba cara kerja baru."},
+    {k:'C',c:'Market',tx:"Karyawan didorong bekerja dengan standar tinggi dan bersaing secara sehat."},
+    {k:'D',c:'Hierarchy',tx:"Karyawan bekerja mengikuti aturan kerja dan prosedur yang sudah ditetapkan."}
   ]},
-  {t:"4 · Perekat organisasi",opts:[
-    {k:'A',c:'Clan',tx:"Yang menyatukan organisasi adalah loyalitas, kepercayaan, dan komitmen bersama yang kuat."},
-    {k:'B',c:'Adhocracy',tx:"Yang menyatukan organisasi adalah semangat inovasi dan keinginan menjadi yang terdepan."},
-    {k:'C',c:'Market',tx:"Yang menyatukan organisasi adalah fokus pada target, pencapaian hasil, dan semangat untuk menang."},
-    {k:'D',c:'Hierarchy',tx:"Yang menyatukan organisasi adalah aturan formal, prosedur, dan kebijakan yang dipatuhi bersama."}
+  {t:"4 · Hal yang membuat perusahaan tetap solid",opts:[
+    {k:'A',c:'Clan',tx:"Rasa percaya, kebersamaan, dan loyalitas antar karyawan."},
+    {k:'B',c:'Adhocracy',tx:"Semangat untuk terus berinovasi dan menjadi yang terdepan."},
+    {k:'C',c:'Market',tx:"Keinginan untuk mencapai target dan memenangkan persaingan."},
+    {k:'D',c:'Hierarchy',tx:"Kepatuhan pada aturan dan sistem kerja yang ada."}
   ]},
-  {t:"5 · Penekanan strategis",opts:[
-    {k:'A',c:'Clan',tx:"Organisasi berfokus pada pengembangan manusia, kepercayaan, dan keterbukaan dalam berkolaborasi."},
-    {k:'B',c:'Adhocracy',tx:"Organisasi berfokus pada eksplorasi peluang baru, inovasi, dan transformasi yang berkelanjutan."},
-    {k:'C',c:'Market',tx:"Organisasi berfokus pada keunggulan kompetitif, penetrasi pasar, dan pencapaian target ambisius."},
-    {k:'D',c:'Hierarchy',tx:"Organisasi berfokus pada stabilitas, efisiensi operasional, dan pengendalian proses yang ketat."}
+  {t:"5 · Hal yang paling ditekankan perusahaan",opts:[
+    {k:'A',c:'Clan',tx:"Pengembangan karyawan dan hubungan kerja yang baik."},
+    {k:'B',c:'Adhocracy',tx:"Mencari peluang baru dan menciptakan hal baru."},
+    {k:'C',c:'Market',tx:"Mencapai target dan memperkuat posisi di pasar."},
+    {k:'D',c:'Hierarchy',tx:"Menjaga pekerjaan tetap stabil, efisien, dan teratur."}
   ]},
-  {t:"6 · Kriteria keberhasilan",opts:[
-    {k:'A',c:'Clan',tx:"Keberhasilan diukur dari pengembangan karyawan, semangat tim, dan kepedulian terhadap sesama."},
-    {k:'B',c:'Adhocracy',tx:"Keberhasilan diukur dari inovasi yang dihasilkan, produk unik, dan keberanian memimpin perubahan."},
-    {k:'C',c:'Market',tx:"Keberhasilan diukur dari pangsa pasar, keunggulan atas kompetitor, dan pencapaian target bisnis."},
-    {k:'D',c:'Hierarchy',tx:"Keberhasilan diukur dari efisiensi proses, keandalan operasional, dan biaya yang terkendali."}
+  {t:"6 · Cara perusahaan menilai keberhasilan",opts:[
+    {k:'A',c:'Clan',tx:"Jika karyawan berkembang dan kerja tim berjalan baik."},
+    {k:'B',c:'Adhocracy',tx:"Jika muncul ide baru, inovasi, atau produk yang berbeda."},
+    {k:'C',c:'Market',tx:"Jika target tercapai dan perusahaan unggul dibanding pesaing."},
+    {k:'D',c:'Hierarchy',tx:"Jika pekerjaan berjalan lancar, efisien, dan minim kesalahan."}
   ]}
 ];
 
@@ -314,7 +314,7 @@ function showRes(){
 }
 
 function sendToSheet(name,org,ns,ps){
-  if(APPS_SCRIPT_URL==='PASTE_URL_APPS_SCRIPT_DI_SINI')return;
+  if(APPS_SCRIPT_URL==='https://script.google.com/macros/s/AKfycbynYbYUPtR9quczQY-E6KlTSp0m3zoXS14nyXQmtbKNNn59Pz7S7iu_QSPuJsXzOh-A/exec')return;
   const status=document.getElementById('submit-status');
   status.className='submit-status sending';status.textContent='⏳ Mengirim data ke database...';
   const params=new URLSearchParams({
