@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asesmen Budaya Perusahaan</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f2;color:#1a1a18;min-height:100vh;padding:2rem 1rem}
+  .app{max-width:660px;margin:0 auto}
+  .screen{display:none}.screen.active{display:block}
+  .header{margin-bottom:2rem}
+  .header-label{font-size:11px;letter-spacing:.08em;color:#888;text-transform:uppercase;margin-bottom:4px}
+  .header-title{font-size:26px;font-weight:600;color:#1a1a18;margin-bottom:2px}
+  .header-sub{font-size:14px;color:#666;line-height:1.6}
+  .prog-bar{height:3px;background:#e0e0d8;border-radius:2px;margin-bottom:2rem}
+  .prog-fill{height:100%;background:#1a7a56;border-radius:2px;transition:width .4s ease}
+  .form-group{margin-bottom:1rem}
+  .form-label{font-size:13px;color:#555;display:block;margin-bottom:5px;font-weight:500}
+  .form-input{width:100%;padding:10px 13px;border:1px solid #d8d8d0;border-radius:8px;font-size:14px;background:#fff;color:#1a1a18;font-family:inherit;transition:border-color .15s}
+  .form-input:focus{outline:none;border-color:#1a7a56;box-shadow:0 0 0 3px rgba(26,122,86,.1)}
+  .intro-desc{font-size:14px;color:#555;line-height:1.7;margin-bottom:1.25rem}
+  .tip-box{background:#fff;border:1px solid #e0e0d8;border-left:3px solid #1a7a56;border-radius:8px;padding:.875rem 1rem;margin-bottom:1.5rem;font-size:13px;color:#555;line-height:1.65}
+  .tip-box strong{color:#1a1a18}
+  .sec-label{font-size:11px;letter-spacing:.07em;color:#888;text-transform:uppercase;margin-bottom:4px}
+  .sec-title{font-size:20px;font-weight:600;color:#1a1a18;margin-bottom:.25rem}
+  .sec-sub{font-size:13px;color:#888;margin-bottom:1.25rem}
+  .comp-dots{display:flex;gap:6px;margin-bottom:1.25rem}
+  .cdot{width:9px;height:9px;border-radius:50%;background:#e0e0d8;transition:background .2s}
+  .cdot.done{background:#1a7a56}
+  .dimension{margin-bottom:.875rem;border:1px solid #e0e0d8;border-radius:12px;padding:1rem 1.125rem;background:#fff}
+  .dim-title{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#999;margin-bottom:.75rem;transition:color .2s}
+  .dim-title.done{color:#1a7a56}
+  .opt-card{display:flex;align-items:flex-start;gap:12px;padding:9px 10px;border:1px solid #eee;border-radius:8px;margin-bottom:6px;cursor:pointer;transition:all .15s;user-select:none}
+  .opt-card:last-child{margin-bottom:0}
+  .opt-card:hover{border-color:#c0c0b8;background:#fafaf7}
+  .opt-card.ranked{border-color:#d0e8de;background:#f7fdf9}
+  .rbadge{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;margin-top:1px;border:1.5px solid #ddd;background:#f5f5f0;color:#bbb;transition:all .2s}
+  .rbadge.r1{background:#1a7a56;color:#fff;border-color:#1a7a56}
+  .rbadge.r2{background:#3aaa7e;color:#fff;border-color:#3aaa7e}
+  .rbadge.r3{background:#9fd9c0;color:#1a4a36;border-color:#9fd9c0}
+  .rbadge.r4{background:#e8e8e0;color:#999;border-color:#e8e8e0}
+  .opt-text{font-size:13px;color:#333;line-height:1.55;padding-top:4px}
+  .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;gap:12px}
+  .btn{padding:10px 22px;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:500;transition:all .15s;border:1px solid transparent}
+  .btn-primary{background:#1a7a56;color:#fff;border-color:#1a7a56}
+  .btn-primary:hover{background:#145f43}
+  .btn-primary:disabled{opacity:.35;cursor:not-allowed}
+  .btn-ghost{background:#fff;color:#555;border-color:#d8d8d0}
+  .btn-ghost:hover{background:#f5f5f2;border-color:#bbb}
+  .btn-full{width:100%;padding:11px;margin-top:.5rem}
+  .res-meta{font-size:13px;color:#888;margin-bottom:1.5rem}
+  .culture-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+  .ccard{background:#fff;border:1px solid #e0e0d8;border-radius:12px;padding:.875rem 1rem}
+  .cname{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+  .cscore-row{display:flex;align-items:flex-start;gap:10px}
+  .cscore-now{font-size:22px;font-weight:700;line-height:1}
+  .cscore-pref{font-size:15px;font-weight:600;color:#888;line-height:1}
+  .cscore-lbl{font-size:10px;color:#bbb;margin-top:3px}
+  .gap-pill{margin-left:auto;text-align:right}
+  .gap-val{font-size:13px;font-weight:600}
+  .leg-row{display:flex;gap:16px;margin-bottom:.875rem;font-size:12px;color:#888}
+  .leg-item{display:flex;align-items:center;gap:5px}
+  .leg-sq{width:10px;height:10px;border-radius:2px}
+  .chart-wrap{position:relative;width:100%;height:300px;margin-bottom:1.5rem;background:#fff;border:1px solid #e0e0d8;border-radius:12px;padding:1rem}
+  .wa-box{background:#f0faf5;border:1px solid #b2dfdb;border-radius:12px;padding:1rem 1.125rem;margin-bottom:1rem}
+  .wa-box-title{font-size:12px;font-weight:600;color:#1a7a56;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
+  .wa-text{font-size:12px;color:#333;line-height:1.6;white-space:pre-wrap;font-family:monospace;max-height:180px;overflow-y:auto}
+  .copy-btn{display:flex;align-items:center;gap:6px;margin-top:.75rem;padding:7px 14px;background:#1a7a56;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+  .copy-btn:hover{background:#145f43}
+  .copy-confirm{display:inline-block;margin-left:8px;font-size:12px;color:#1a7a56;opacity:0;transition:opacity .3s}
+  .divider{height:1px;background:#e0e0d8;margin:1.25rem 0}
+  .submit-status{font-size:12px;margin-top:.75rem;padding:8px 12px;border-radius:6px;display:none}
+  .submit-status.sending{background:#fff8e1;color:#856404;border:1px solid #ffc107;display:block}
+  .submit-status.ok{background:#e8f5e9;color:#1a7a56;border:1px solid #a5d6a7;display:block}
+  .submit-status.err{background:#fce4ec;color:#b71c1c;border:1px solid #f48fb1;display:block}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- INTRO -->
+<div class="screen active" id="s-intro">
+  <div class="header">
+    <div class="header-label">Asesmen Budaya Perusahaan</div>
+    <div class="header-title">Asesmen Budaya Perusahaan</div>
+    <div class="header-sub">Kuesioner ini membantu melihat gambaran budaya kerja di perusahaan Anda.</div>
+  </div>
+  <div class="intro-desc">Setiap bagian berisi 4 pernyataan. Tidak ada jawaban yang benar atau pun salah. Pilih pernyataan yang paling menggambarkan kondisi di perusahaan Anda.<br><br>Anda akan mengisi dua kali: kondisi <em>saat ini</em> dan kondisi yang <em>diharapkan</em> ke depan.</div>
+  <div class="tip-box"><strong>Cara mengisi:</strong> Klik pernyataan secara berurutan — klik pertama berarti paling sesuai, klik keempat berarti paling tidak sesuai. Klik lagi pada pernyataan yang sama untuk membatalkan pilihan.</div>
+  <div class="form-group">
+    <label class="form-label">Nama Anda</label>
+    <input class="form-input" type="text" id="inp-name" placeholder="Nama lengkap">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Perusahaan / Posisi</label>
+    <input class="form-input" type="text" id="inp-org" placeholder="Nama organisasi atau unit">
+  </div>
+  <button class="btn btn-primary btn-full" style="margin-top:1.5rem" onclick="startApp()">Mulai penilaian →</button>
+</div>
+
+<!-- NOW -->
+<div class="screen" id="s-now">
+  <div class="prog-bar"><div class="prog-fill" id="pb-now" style="width:0%"></div></div>
+  <div class="sec-label">Bagian 1 dari 2</div>
+  <div class="sec-title">Kondisi <em>saat ini</em></div>
+  <div class="sec-sub">Pilih pernyataan yang paling menggambarkan kondisi perusahaan Anda saat ini. <strong>Klik pertama = paling sesuai.</strong></div>
+  <div class="comp-dots" id="cd-now"></div>
+  <div id="dims-now"></div>
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="go('s-intro')">← Kembali</button>
+    <button class="btn btn-primary" id="bn-now" onclick="go('s-pref')" disabled>Lanjut ke bagian 2 →</button>
+  </div>
+</div>
+
+<!-- PREFERRED -->
+<div class="screen" id="s-pref">
+  <div class="prog-bar"><div class="prog-fill" id="pb-pref" style="width:50%"></div></div>
+  <div class="sec-label">Bagian 2 dari 2</div>
+  <div class="sec-title">Kondisi yang <em>diharapkan</em></div>
+  <div class="sec-sub">Pilih pernyataan yang paling menggambarkan kondisi perusahaan yang Anda harapkan ke depan. <strong>Klik pertama = paling sesuai.</strong></div>
+  <div class="comp-dots" id="cd-pref"></div>
+  <div id="dims-pref"></div>
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="go('s-now')">← Kembali</button>
+    <button class="btn btn-primary" id="bn-pref" onclick="showRes()" disabled>Lihat hasil →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="s-res">
+  <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div>
+  <div class="sec-label">Profil budaya perusahaan</div>
+  <div class="sec-title" id="res-title"></div>
+  <div class="res-meta" id="res-meta"></div>
+  <div class="leg-row">
+    <div class="leg-item"><div class="leg-sq" style="background:#1a7a56"></div><span>Saat ini</span></div>
+    <div class="leg-item"><div class="leg-sq" style="background:transparent;border:1.5px dashed #6c63c0"></div><span>Diharapkan</span></div>
+  </div>
+  <div class="chart-wrap"><canvas id="rchart"></canvas></div>
+  <div class="culture-grid" id="cgrid"></div>
+  <div class="divider"></div>
+  <div class="wa-box">
+    <div class="wa-box-title">Salin hasil untuk konsultan</div>
+    <div class="wa-text" id="wa-text"></div>
+    <div style="display:flex;align-items:center">
+      <button class="copy-btn" onclick="copyWA()">Salin teks</button>
+      <span class="copy-confirm" id="copy-ok">✓ Disalin!</span>
+    </div>
+    <div class="submit-status" id="submit-status"></div>
+  </div>
+  <button class="btn btn-ghost btn-full" onclick="resetApp()">Isi ulang dari awal</button>
+</div>
+
+</div>
+
+<script>
+// ===================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwantpj8oexU2p9zblPS5NvLriBmr867oQ-_xs2tO_dlb0hBRT-OLR79hsB_JFPYA-z/exec';
+// ===================================================
+
+const DIMS=[
+  {t:"1 · Gambaran umum perusahaan",opts:[
+    {k:'A',c:'Clan',tx:"Perusahaan terasa seperti keluarga. Karyawan saling mengenal dan saling membantu."},
+    {k:'B',c:'Adhocracy',tx:"Perusahaan penuh ide baru. Karyawan didorong mencoba cara baru dan berani mengambil risiko."},
+    {k:'C',c:'Market',tx:"Perusahaan sangat fokus pada target dan hasil kerja."},
+    {k:'D',c:'Hierarchy',tx:"Perusahaan berjalan dengan aturan dan prosedur yang jelas."}
+  ]},
+  {t:"2 · Cara pimpinan memimpin",opts:[
+    {k:'A',c:'Clan',tx:"Pimpinan seperti pembimbing yang peduli pada perkembangan karyawan."},
+    {k:'B',c:'Adhocracy',tx:"Pimpinan mendorong tim untuk berani mencoba ide baru."},
+    {k:'C',c:'Market',tx:"Pimpinan menuntut hasil kerja yang tinggi dan mendorong tim untuk menang dalam persaingan."},
+    {k:'D',c:'Hierarchy',tx:"Pimpinan fokus menjaga pekerjaan berjalan rapi, tertib, dan terkoordinasi."}
+  ]},
+  {t:"3 · Cara perusahaan mengelola karyawan",opts:[
+    {k:'A',c:'Clan',tx:"Karyawan banyak bekerja dalam tim dan dilibatkan dalam pengambilan keputusan."},
+    {k:'B',c:'Adhocracy',tx:"Karyawan diberi kebebasan untuk berkreasi dan mencoba cara kerja baru."},
+    {k:'C',c:'Market',tx:"Karyawan didorong bekerja dengan standar tinggi dan bersaing secara sehat."},
+    {k:'D',c:'Hierarchy',tx:"Karyawan bekerja mengikuti aturan kerja dan prosedur yang sudah ditetapkan."}
+  ]},
+  {t:"4 · Hal yang membuat perusahaan tetap solid",opts:[
+    {k:'A',c:'Clan',tx:"Rasa percaya, kebersamaan, dan loyalitas antar karyawan."},
+    {k:'B',c:'Adhocracy',tx:"Semangat untuk terus berinovasi dan menjadi yang terdepan."},
+    {k:'C',c:'Market',tx:"Keinginan untuk mencapai target dan memenangkan persaingan."},
+    {k:'D',c:'Hierarchy',tx:"Kepatuhan pada aturan dan sistem kerja yang ada."}
+  ]},
+  {t:"5 · Hal yang paling ditekankan perusahaan",opts:[
+    {k:'A',c:'Clan',tx:"Pengembangan karyawan dan hubungan kerja yang baik."},
+    {k:'B',c:'Adhocracy',tx:"Mencari peluang baru dan menciptakan hal baru."},
+    {k:'C',c:'Market',tx:"Mencapai target dan memperkuat posisi di pasar."},
+    {k:'D',c:'Hierarchy',tx:"Menjaga pekerjaan tetap stabil, efisien, dan teratur."}
+  ]},
+  {t:"6 · Cara perusahaan menilai keberhasilan",opts:[
+    {k:'A',c:'Clan',tx:"Jika karyawan berkembang dan kerja tim berjalan baik."},
+    {k:'B',c:'Adhocracy',tx:"Jika muncul ide baru, inovasi, atau produk yang berbeda."},
+    {k:'C',c:'Market',tx:"Jika target tercapai dan perusahaan unggul dibanding pesaing."},
+    {k:'D',c:'Hierarchy',tx:"Jika pekerjaan berjalan lancar, efisien, dan minim kesalahan."}
+  ]}
+];
+
+const W={1:40,2:30,3:20,4:10};
+const COL={Clan:'#1a7a56',Adhocracy:'#6c63c0',Market:'#c45a28',Hierarchy:'#2571b5'};
+const CLBL={Clan:'Clan · Collaborate',Adhocracy:'Adhocracy · Create',Market:'Market · Compete',Hierarchy:'Hierarchy · Control'};
+
+let nowR=DIMS.map(()=>({}));
+let prefR=DIMS.map(()=>({}));
+let radarChart=null;
+
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+
+function startApp(){renderDims('now');renderDims('pref');updDots('now');updDots('pref');go('s-now')}
+
+function resetApp(){
+  nowR=DIMS.map(()=>({}));prefR=DIMS.map(()=>({}));
+  document.getElementById('inp-name').value='';document.getElementById('inp-org').value='';
+  renderDims('now');renderDims('pref');updDots('now');updDots('pref');
+  document.getElementById('bn-now').disabled=true;document.getElementById('bn-pref').disabled=true;
+  go('s-intro');
+}
+
+function renderDims(mode){
+  const R=mode==='now'?nowR:prefR;
+  const cont=document.getElementById('dims-'+mode);cont.innerHTML='';
+  DIMS.forEach((d,i)=>{
+    const wrap=document.createElement('div');wrap.className='dimension';wrap.id='dw-'+mode+'-'+i;
+    const done=Object.keys(R[i]).length===4;
+    const th=document.createElement('div');th.className='dim-title'+(done?' done':'');th.textContent=d.t+(done?' ✓':'');wrap.appendChild(th);
+    d.opts.forEach(o=>{
+      const rk=R[i][o.k]||null;
+      const card=document.createElement('div');card.className='opt-card'+(rk?' ranked':'');card.onclick=()=>tap(mode,i,o.k);
+      const badge=document.createElement('div');badge.className='rbadge'+(rk?' r'+rk:'');badge.textContent=rk||'';
+      const txt=document.createElement('div');txt.className='opt-text';txt.textContent=o.tx;
+      card.appendChild(badge);card.appendChild(txt);wrap.appendChild(card);
+    });
+    cont.appendChild(wrap);
+  });
+}
+
+function tap(mode,di,ok){
+  const R=mode==='now'?nowR:prefR;const dr=R[di];
+  if(dr[ok]){const rv=dr[ok];delete dr[ok];Object.keys(dr).forEach(k=>{if(dr[k]>rv)dr[k]--;});}
+  else{if(Object.keys(dr).length<4)dr[ok]=Object.keys(dr).length+1;}
+  redrawDim(mode,di);updDots(mode);updBtns();
+}
+
+function redrawDim(mode,di){
+  const R=mode==='now'?nowR:prefR;const dr=R[di];
+  const wrap=document.getElementById('dw-'+mode+'-'+di);
+  const done=Object.keys(dr).length===4;
+  const th=wrap.querySelector('.dim-title');th.className='dim-title'+(done?' done':'');th.textContent=DIMS[di].t+(done?' ✓':'');
+  const cards=wrap.querySelectorAll('.opt-card');
+  DIMS[di].opts.forEach((o,j)=>{const rk=dr[o.k]||null;cards[j].className='opt-card'+(rk?' ranked':'');const b=cards[j].querySelector('.rbadge');b.className='rbadge'+(rk?' r'+rk:'');b.textContent=rk||'';});
+}
+
+function updDots(mode){
+  const R=mode==='now'?nowR:prefR;const cont=document.getElementById('cd-'+mode);cont.innerHTML='';
+  const done=R.filter(r=>Object.keys(r).length===4).length;
+  R.forEach(r=>{const d=document.createElement('div');d.className='cdot'+(Object.keys(r).length===4?' done':'');cont.appendChild(d);});
+  const pb=document.getElementById('pb-'+mode);if(pb)pb.style.width=(done/6*50+(mode==='pref'?50:0))+'%';
+}
+
+function updBtns(){
+  document.getElementById('bn-now').disabled=!nowR.every(r=>Object.keys(r).length===4);
+  document.getElementById('bn-pref').disabled=!prefR.every(r=>Object.keys(r).length===4);
+}
+
+function calcScores(R){
+  const sc={Clan:0,Adhocracy:0,Market:0,Hierarchy:0};
+  R.forEach((dr,i)=>{DIMS[i].opts.forEach(o=>{const rk=dr[o.k];if(rk)sc[o.c]+=W[rk];});});
+  Object.keys(sc).forEach(k=>sc[k]=Math.round(sc[k]/6));return sc;
+}
+
+function showRes(){
+  const name=document.getElementById('inp-name').value.trim()||'Responden';
+  const org=document.getElementById('inp-org').value.trim()||'Organisasi';
+  const date=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('res-title').textContent=org;
+  document.getElementById('res-meta').textContent=name+' · '+date;
+
+  const ns=calcScores(nowR);const ps=calcScores(prefR);
+  const cultures=['Clan','Adhocracy','Market','Hierarchy'];
+
+  const grid=document.getElementById('cgrid');grid.innerHTML='';
+  cultures.forEach(c=>{
+    const card=document.createElement('div');card.className='ccard';card.style.borderTop='3px solid '+COL[c];
+    const gap=ps[c]-ns[c];const gapStr=gap>0?'+'+gap:gap<0?''+gap:'±0';
+    const gapColor=gap>0?'#1a7a56':gap<0?'#c45a28':'#999';
+    card.innerHTML='<div class="cname" style="color:'+COL[c]+'">'+CLBL[c]+'</div>'+
+      '<div class="cscore-row">'+
+        '<div><div class="cscore-now" style="color:'+COL[c]+'">'+ns[c]+'</div><div class="cscore-lbl">saat ini</div></div>'+
+        '<div><div class="cscore-pref">'+ps[c]+'</div><div class="cscore-lbl">diharapkan</div></div>'+
+        '<div class="gap-pill"><div class="gap-val" style="color:'+gapColor+'">'+gapStr+'</div><div class="cscore-lbl">gap</div></div>'+
+      '</div>';
+    grid.appendChild(card);
+  });
+
+  if(radarChart)radarChart.destroy();
+  const ctx=document.getElementById('rchart').getContext('2d');
+  radarChart=new Chart(ctx,{type:'radar',
+    data:{labels:['Clan\n(Collaborate)','Adhocracy\n(Create)','Market\n(Compete)','Hierarchy\n(Control)'],
+      datasets:[
+        {label:'Saat ini',data:[ns.Clan,ns.Adhocracy,ns.Market,ns.Hierarchy],backgroundColor:'rgba(26,122,86,.12)',borderColor:'#1a7a56',borderWidth:2,pointBackgroundColor:'#1a7a56',pointRadius:4},
+        {label:'Diharapkan',data:[ps.Clan,ps.Adhocracy,ps.Market,ps.Hierarchy],backgroundColor:'rgba(108,99,192,.08)',borderColor:'#6c63c0',borderWidth:2,borderDash:[5,4],pointBackgroundColor:'#6c63c0',pointRadius:4}
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{r:{min:0,max:40,ticks:{stepSize:10,font:{size:10},color:'#aaa',backdropColor:'transparent'},grid:{color:'rgba(0,0,0,.06)'},pointLabels:{font:{size:11},color:'#777'}}}}
+  });
+
+  document.getElementById('wa-text').textContent=buildWAText(name,org,date,ns,ps);
+  go('s-res');
+  sendToSheet(name,org,ns,ps);
+}
+
+function sendToSheet(name,org,ns,ps){
+  if(APPS_SCRIPT_URL==='https://script.google.com/macros/s/AKfycbwantpj8oexU2p9zblPS5NvLriBmr867oQ-_xs2tO_dlb0hBRT-OLR79hsB_JFPYA-z/exec')return;
+  const status=document.getElementById('submit-status');
+  status.className='submit-status sending';status.textContent='⏳ Mengirim data ke database...';
+  const params=new URLSearchParams({
+    name,org,
+    nowClan:ns.Clan,nowAdhocracy:ns.Adhocracy,nowMarket:ns.Market,nowHierarchy:ns.Hierarchy,
+    prefClan:ps.Clan,prefAdhocracy:ps.Adhocracy,prefMarket:ps.Market,prefHierarchy:ps.Hierarchy
+  });
+  const img=new Image();
+  img.onload=()=>{status.className='submit-status ok';status.textContent='✓ Data berhasil tersimpan ke database konsultan.';};
+  img.onerror=()=>{status.className='submit-status ok';status.textContent='✓ Data berhasil tersimpan ke database konsultan.';};
+  img.src=APPS_SCRIPT_URL+'?'+params.toString();
+}
+
+function buildWAText(name,org,date,ns,ps){
+  const bar=s=>'█'.repeat(Math.round(s/40*10))+'░'.repeat(10-Math.round(s/40*10))+' '+s;
+  return ['📊 *HASIL ASESMEN BUDAYA PERUSAHAAN*','👤 '+name,'🏢 '+org,'📅 '+date,'',
+    '*Skor per tipe budaya (skala 0–40)*','',
+    '🟢 *Clan (Collaborate)*','  Saat ini   : '+bar(ns.Clan),'  Diharapkan: '+bar(ps.Clan),'',
+    '🟣 *Adhocracy (Create)*','  Saat ini   : '+bar(ns.Adhocracy),'  Diharapkan: '+bar(ps.Adhocracy),'',
+    '🟠 *Market (Compete)*','  Saat ini   : '+bar(ns.Market),'  Diharapkan: '+bar(ps.Market),'',
+    '🔵 *Hierarchy (Control)*','  Saat ini   : '+bar(ns.Hierarchy),'  Diharapkan: '+bar(ps.Hierarchy),'',
+    'Gap terbesar: '+biggestGap(ns,ps),'','_(Dikirim via Asesmen Budaya Perusahaan)_'].join('\n');
+}
+
+function biggestGap(ns,ps){
+  const c=['Clan','Adhocracy','Market','Hierarchy'];let mx=0,mxc='';
+  c.forEach(k=>{const g=Math.abs(ps[k]-ns[k]);if(g>mx){mx=g;mxc=k;}});
+  if(!mx)return 'tidak ada gap signifikan';
+  return mxc+' ('+mx+' poin, '+(ps[mxc]>ns[mxc]?'ingin ditingkatkan':'ingin dikurangi')+')';
+}
+
+function copyWA(){
+  navigator.clipboard.writeText(document.getElementById('wa-text').textContent).then(()=>{
+    const el=document.getElementById('copy-ok');el.style.opacity='1';setTimeout(()=>el.style.opacity='0',2000);
+  });
+}
+</script>
+</body>
+</html>
